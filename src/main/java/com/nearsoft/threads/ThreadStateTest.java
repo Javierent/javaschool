@@ -1,0 +1,44 @@
+package main.java.com.nearsoft.threads;
+
+public class ThreadStateTest {
+
+    public static void main(String[] args) {
+
+        Object syncObject = new Object();
+
+        ThreadState ts = new ThreadState(syncObject);
+        System.out.println("Before start() - ts.isAlive :" + ts.isAlive());
+        System.out.println("#1: " + ts.getState());
+
+        ts.start();
+        System.out.println("After start() - ts.isAlive: " + ts.isAlive());
+        System.out.println("#2: " + ts.getState());
+        ts.setWait(true);
+
+        sleepNow(100);
+
+        synchronized (syncObject) {
+            System.out.println("#3: " + ts.getState());
+            ts.setWait(false);
+
+            syncObject.notifyAll();
+        }
+
+        sleepNow(2000);
+        System.out.println("#4: " + ts.getState());
+        ts.setKeepRunning(false);
+
+        sleepNow(2000);
+        System.out.println("#5: " + ts.getState());
+        System.out.println("At the end  - ts.isAlive: " + ts.isAlive());
+    }
+
+    private static void sleepNow(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+    }
+
+}
